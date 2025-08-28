@@ -20,6 +20,8 @@ logger = logging.getLogger()
 
 class EmbeddingConfig(ProviderConfig):
     provider: str
+    custom_llm_provider: str
+    api_base: str
     base_model: str
     base_dimension: int | float
     rerank_model: Optional[str] = None
