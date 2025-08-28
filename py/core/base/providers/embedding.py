@@ -40,7 +40,7 @@ class EmbeddingConfig(ProviderConfig):
 
     @property
     def supported_providers(self) -> list[str]:
-        return ["litellm", "openai", "ollama"]
+        return ["litellm", "openai", "ollama","xinference"]
 
 
 class EmbeddingProvider(Provider):
