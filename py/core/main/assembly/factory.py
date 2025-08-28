@@ -30,6 +30,7 @@ from core.providers import (
     JwtAuthProvider,
     LiteLLMCompletionProvider,
     LiteLLMEmbeddingProvider,
+    XinferenceEmbeddingProvider,
     MailerSendEmailProvider,
     MistralOCRProvider,
     NaClCryptoConfig,
@@ -255,6 +256,7 @@ class R2RProviderFactory:
         LiteLLMEmbeddingProvider
         | OllamaEmbeddingProvider
         | OpenAIEmbeddingProvider
+        | XinferenceEmbeddingProvider
     ):
         embedding_provider: Optional[EmbeddingProvider] = None
 
@@ -276,6 +278,11 @@ class R2RProviderFactory:
             from core.providers import OllamaEmbeddingProvider
 
             embedding_provider = OllamaEmbeddingProvider(embedding)
+        
+        elif embedding.provider == "xinference":
+            from core.providers import XinferenceEmbeddingProvider
+
+            embedding_provider = XinferenceEmbeddingProvider(embedding)
 
         else:
             raise ValueError(
@@ -369,6 +376,7 @@ class R2RProviderFactory:
             LiteLLMEmbeddingProvider
             | OpenAIEmbeddingProvider
             | OllamaEmbeddingProvider
+            | XinferenceEmbeddingProvider
         ] = None,
         ingestion_provider_override: Optional[
             R2RIngestionProvider | UnstructuredIngestionProvider
