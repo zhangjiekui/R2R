@@ -1,5 +1,5 @@
 
-# [database]
+[database]
 # Postgres Configuration
 # R2R_POSTGRES_USER="langchain"
 # R2R_POSTGRES_PASSWORD="langchain"
@@ -9,14 +9,14 @@
 # R2R_POSTGRES_MAX_CONNECTIONS=1024
 # R2R_POSTGRES_STATEMENT_CACHE_SIZE=100
 
-# provider = "postgres"
-# user = "langchain"
-# password = "langchain"
-# host = "10.1.150.105"
-# port = 7000
-# db_name = "postgres"
-# project_name = "r2rproject"
-# default_collection_name = "R2RDefaultClection"
+provider = "postgres"
+user = "langchain"
+password = "langchain"
+host = "10.1.150.105"
+port = 7000
+db_name = "postgres"
+project_name = "r2rprojectname"
+default_collection_name = "R2RDefaultCollectionName"
 
 [app]
 # app settings are global available like `r2r_config.agent.app`
@@ -108,7 +108,7 @@ add_title_as_prefix = false
 concurrent_request_limit = 256
 
 [completion]
-provider = "litellm"
+provider = "openai"
 concurrent_request_limit = 64
   [completion.generation_config]
     model = "openai/default"
@@ -121,12 +121,15 @@ concurrent_request_limit = 64
     add_generation_kwargs = { }
 
 [ingestion]
-provider = "r2r"
+#provider = "r2r"
+#chunking_strategy = "recursive"
+provider = "unstructured_local"
 strategy = "auto"
+chunking_strategy = "by_title"
 document_summary_model = "openai/default"
 vision_img_model = "openai/qwenvl"
 vision_pdf_model = "openai/qwenvl"
-chunking_strategy = "recursive"
+
 chunk_size = 512
 chunk_overlap = 100
 excluded_parsers = ["mp4"]
@@ -145,12 +148,11 @@ log_table = "logs"
 log_info_table = "log_info"
 
 [orchestration]
-provider = "simple"
+# provider = "simple"
 # 下面的配置会出错：details = "DNS resolution failed for hatchet-engine:7077: C-ares status is not ARES_SUCCESS qtype=AAAA name=hatchet-engine is_balancer=0: Domain name not found"
-# provider = "hatchet" 
+provider = "hatchet" 
 server_url = "http://10.1.150.105:7274"
 host_port =  "localhost:7274"
 
 [email]
 provider = "console_mock" # `smtp` | `sendgrid` supported
-
