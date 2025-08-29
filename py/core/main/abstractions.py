@@ -16,6 +16,7 @@ from core.providers import (
     MailerSendEmailProvider,
     MistralOCRProvider,
     OllamaEmbeddingProvider,
+    XinferenceEmbeddingProvider,
     OpenAICompletionProvider,
     OpenAIEmbeddingProvider,
     PostgresDatabaseProvider,
@@ -60,12 +61,15 @@ class R2RProviders(BaseModel):
         LiteLLMEmbeddingProvider
         | OpenAIEmbeddingProvider
         | OllamaEmbeddingProvider
+        | XinferenceEmbeddingProvider
+
     )
     file: PostgresFileProvider | S3FileProvider
     completion_embedding: (
         LiteLLMEmbeddingProvider
         | OpenAIEmbeddingProvider
         | OllamaEmbeddingProvider
+        | XinferenceEmbeddingProvider
     )
     llm: (
         AnthropicCompletionProvider
