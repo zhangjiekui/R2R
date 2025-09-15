@@ -144,27 +144,32 @@ class JqIngestionProvider(IngestionProvider):
                     database_provider=self.database_provider,
                     llm_provider=self.llm_provider,
                 )
-        for doc_type, doc_parser_name in self.config.extra_parsers.items():
-            logger.info(f"JqIngestionProvider extra parser: {doc_parser_name}")
+        for doc_type, doc_parser_names in self.config.extra_parsers.items():
+            logger.info(f"JqIngestionProvider extra parser: {doc_parser_names}")
             logger.info(f"JqIngestionProvider extra parser doc_type: {doc_type}")
             logger.info(f"JqIngestionProvider EXTRA_PARSERS: {JqIngestionProvider.EXTRA_PARSERS[doc_type]}")
-
-            if isinstance(doc_parser_name, list):
-                doc_parser_name = doc_parser_name[0]
-            try:
-                self.parsers[f"{doc_parser_name}_{str(doc_type)}"] = (
-                    JqIngestionProvider.EXTRA_PARSERS[doc_type][doc_parser_name](
-                        config=self.config,
-                        database_provider=self.database_provider,
-                        llm_provider=self.llm_provider,
-                        # ocr_provider=None,
+            if not isinstance(doc_parser_names, list):
+                doc_parser_names = [doc_parser_names]
+            for doc_parser_name in doc_parser_names:
+                if doc_parser_name in JqIngestionProvider.EXTRA_PARSERS[doc_type].keys():
+                    try:
+                        self.parsers[f"{doc_parser_name}_{str(doc_type)}"] = (
+                            JqIngestionProvider.EXTRA_PARSERS[doc_type][doc_parser_name](
+                                config=self.config,
+                                database_provider=self.database_provider,
+                                llm_provider=self.llm_provider,
+                                # ocr_provider=None,
+                            )
+                        )
+                    except Exception as e:
+                        logger.warning(
+                            f"Error initializing parser: {doc_parser_name} for doc_type '{doc_type}': {str(e)}"
+                        )
+                else:
+                    logger.warning(
+                        f"Parser '{doc_parser_name}' not needed for JqIngestionProvider doc_type '{doc_type}'"
                     )
-                )
-            except Exception as e:
-                logger.warning(
-                    f"Error initializing parser: {doc_parser_name} for doc_type: {doc_type}"
-                )
-                logger.warning(e)
+
 
     def _build_text_splitter(
         self, ingestion_config_override: Optional[dict] = None

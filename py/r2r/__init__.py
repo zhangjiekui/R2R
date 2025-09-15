@@ -29,6 +29,7 @@ __version__ = metadata.version("r2r")  # type: ignore
 __all__ = [
     "R2RAsyncClient",
     "R2RClient",
+    "env_models_instance",
     "__version__",
     "R2RException",
 ] + shared_all
