@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI):
 
 
 async def create_r2r_app(
-    config_name: Optional[str] = "default",
+    config_name: Optional[str] = "full",
     config_path: Optional[str] = None,
 ) -> R2RApp:
     config = R2RConfig.load(config_name=config_name, config_path=config_path)
@@ -68,7 +68,7 @@ async def create_r2r_app(
 
 
 config_name = os.getenv("R2R_CONFIG_NAME", None)
-config_path = os.getenv("R2R_CONFIG_PATH", None)
+config_path = os.getenv("R2R_CONFIG_PATH", "/data/R2R/docker/user_configs/full_jq.toml")
 
 if not config_path and not config_name:
     config_name = "default"
@@ -92,6 +92,13 @@ logging.info(
 )
 logging.info(f"Environment R2R_PROJECT_NAME: {os.getenv('R2R_PROJECT_NAME')}")
 logging.info(f"Using project name: {project_name}")
+os.environ["R2R_POSTGRES_HOST"] = "10.1.150.105"
+os.environ["R2R_POSTGRES_USER"]="langchain"
+os.environ["R2R_POSTGRES_PASSWORD"]="langchain"
+os.environ["R2R_POSTGRES_PORT"]="7000"
+os.environ["R2R_POSTGRES_DBNAME"]="postgres"
+# R2R_POSTGRES_MAX_CONNECTIONS=1024
+# R2R_POSTGRES_STATEMENT_CACHE_SIZE=100
 logging.info(
     f"Environment R2R_POSTGRES_HOST: {os.getenv('R2R_POSTGRES_HOST')}"
 )

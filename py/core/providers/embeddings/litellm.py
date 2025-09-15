@@ -4,8 +4,8 @@ import math
 import os
 from copy import copy
 from typing import Any
-
 import litellm
+litellm._turn_on_debug()
 import requests
 from aiohttp import ClientError, ClientSession
 from litellm import AuthenticationError, aembedding, embedding
@@ -18,6 +18,7 @@ from core.base import (
 )
 
 from .utils import truncate_texts_to_token_limit
+
 
 logger = logging.getLogger()
 
@@ -44,7 +45,13 @@ class LiteLLMEmbeddingProvider(EmbeddingProvider):
                 "LiteLLMEmbeddingProvider must be initialized with provider `litellm`."
             )
 
-        self.rerank_url = None
+        self.api_base = config.api_base
+        self.base_model = config.base_model
+        self.base_dimension = config.base_dimension        
+        self.rerank_url = config.rerank_url
+        self.rerank_model=config.rerank_model
+
+
         if config.rerank_model:
             if "huggingface" not in config.rerank_model:
                 raise ValueError(
@@ -66,16 +73,19 @@ class LiteLLMEmbeddingProvider(EmbeddingProvider):
 
     def _get_embedding_kwargs(self, **kwargs):
         embedding_kwargs = {
+            "api_base":self.api_base,
             "model": self.base_model,
             "dimensions": self.base_dimension,
+            "custom_llm_provider":"xinference",
         }
         embedding_kwargs.update(kwargs)
+        logger.warning(f"Embedding kwargs: {embedding_kwargs}")
         return embedding_kwargs
 
     async def _execute_task(self, task: dict[str, Any]) -> list[list[float]]:
         texts = task["texts"]
         kwargs = self._get_embedding_kwargs(**task.get("kwargs", {}))
-
+        logger.warning(f"Embedding kwargs: {kwargs}")
         if "dimensions" in kwargs and math.isnan(kwargs["dimensions"]):
             kwargs.pop("dimensions")
             logger.warning("Dropping nan dimensions from kwargs")
@@ -99,7 +109,7 @@ class LiteLLMEmbeddingProvider(EmbeddingProvider):
             )
             raise
         except Exception as e:
-            error_msg = f"Error getting embeddings: {str(e)}"
+            error_msg = f"Error getting embeddings: {str(e)} + Embedding kwargs: {kwargs}"
             logger.error(error_msg)
 
             raise R2RException(error_msg, 400) from e
@@ -107,6 +117,7 @@ class LiteLLMEmbeddingProvider(EmbeddingProvider):
     def _execute_task_sync(self, task: dict[str, Any]) -> list[list[float]]:
         texts = task["texts"]
         kwargs = self._get_embedding_kwargs(**task.get("kwargs", {}))
+        logger.warning(f"Embedding kwargs: {kwargs}")
         try:
             # Truncate text if it exceeds the model's max input tokens. Some providers do this by default, others do not.
             if kwargs.get("model"):
@@ -126,8 +137,9 @@ class LiteLLMEmbeddingProvider(EmbeddingProvider):
             )
             raise
         except Exception as e:
-            error_msg = f"Error getting embeddings: {str(e)}"
-            logger.error(error_msg)
+            error_msg = f"Error getting embeddings: {str(e)} + Embedding kwargs: {kwargs}"
+            logger.error(error_msg + f"{kwargs=}")
+            logger.warning(f"Embedding kwargs: {kwargs}")
             raise R2RException(error_msg, 400) from e
 
     async def async_get_embedding(

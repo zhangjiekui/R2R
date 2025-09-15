@@ -259,7 +259,7 @@ class R2RProviderFactory:
         | XinferenceEmbeddingProvider
     ):
         embedding_provider: Optional[EmbeddingProvider] = None
-
+        logger.warning(f"Using Xinference Embedding Provider:{embedding=}")
         if embedding.provider == "openai":
             if not os.getenv("OPENAI_API_KEY"):
                 raise ValueError(
@@ -286,7 +286,7 @@ class R2RProviderFactory:
 
         else:
             raise ValueError(
-                f"Embedding provider {embedding.provider} not supported"
+                f"Embedding provider {embedding.provider} not supported.\nembedding = {embedding=}"
             )
 
         return embedding_provider
@@ -499,3 +499,12 @@ class R2RProviderFactory:
             orchestration=orchestration_provider,
             scheduler=scheduler_provider,
         )
+    
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "py.core.main.assembly.builder:R2RBuilder",
+        host="0.0.0.0",
+        port=7272,
+        reload=True,
+    )

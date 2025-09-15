@@ -19,9 +19,9 @@ from .email import (
 )
 from .embeddings import (
     LiteLLMEmbeddingProvider,
+    XinferenceEmbeddingProvider,
     OllamaEmbeddingProvider,
     OpenAIEmbeddingProvider,
-    XinferenceEmbeddingProvider,
 )
 from .file import (
     PostgresFileProvider,

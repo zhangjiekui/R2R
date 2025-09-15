@@ -478,3 +478,5 @@ def test_metadata_title_handling(client: R2RClient):
     # Clean up
     client.documents.delete(id=raw_text_doc_id)
     client.documents.delete(id=chunks_doc_id)
+if __name__ == "__main__":
+    test_file_type_ingestion(client=R2RClient(),file_type="pdf",file_path='/data/R2R/py/core/examples/supported_file_types/pdf.pdf')

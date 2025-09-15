@@ -33,6 +33,7 @@ class XinferenceEmbeddingProvider(EmbeddingProvider):
 
         self.litellm_embedding = embedding
         self.litellm_aembedding = aembedding
+        litellm.drop_params = True
 
         provider = config.provider
         if not provider:
@@ -46,7 +47,7 @@ class XinferenceEmbeddingProvider(EmbeddingProvider):
 
         self.rerank_url = None
         if config.rerank_model:
-            if url := config.rerank_url or os.getenv("XINFERENCE_API_BASE"):
+            if url := os.getenv("XINFERENCE_API_BASE") or config.rerank_url:
                 if not url.endswith("/rerank"):
                     url = f"{url}/rerank"
                 self.rerank_url = url
@@ -280,7 +281,7 @@ class XinferenceEmbeddingProvider(EmbeddingProvider):
                 )
 
             texts = [result.text for result in results]
-            
+
             payload = {
                 "query": query,
                 "documents": texts, 

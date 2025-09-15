@@ -27,19 +27,34 @@ logger = logging.getLogger()
 
 
 class R2RConfig:
+    import pathlib
+    project_root_path = pathlib.Path().resolve()
+    project_path_parts = project_root_path._cparts
+    r2r_index = project_path_parts.index("R2R")
+    r2r_path = "/".join(project_path_parts[:r2r_index+1])[1:]
+    path_full_jq = os.path.join(r2r_path,
+        "docker",
+        "user_configs",
+        "full_jq.toml",
+    )
+    CONFIG_OPTIONS: dict[str, Optional[str]] = {}
+    if os.path.exists(path_full_jq):
+        CONFIG_OPTIONS["default"] = path_full_jq
+
+
     current_file_path = os.path.dirname(__file__)
     config_dir_root = os.path.join(current_file_path, "..", "configs")
     default_config_path = os.path.join(
         current_file_path, "..", "..", "r2r", "r2r.toml"
     )
 
-    CONFIG_OPTIONS: dict[str, Optional[str]] = {}
+    
     for file_ in os.listdir(config_dir_root):
         if file_.endswith(".toml"):
             CONFIG_OPTIONS[file_.removesuffix(".toml")] = os.path.join(
                 config_dir_root, file_
             )
-    CONFIG_OPTIONS["default"] = None
+    
 
     REQUIRED_KEYS: dict[str, list] = {
         "app": [],
@@ -92,6 +107,7 @@ class R2RConfig:
 
         # Override the default configuration with the passed configuration
         default_config = deep_update(default_config, config_data)
+
 
         # Validate and set the configuration
         for section, keys in R2RConfig.REQUIRED_KEYS.items():
@@ -156,8 +172,17 @@ class R2RConfig:
         # Load configuration from TOML file
         with open(config_path, encoding="utf-8") as f:
             config_data = toml.load(f)
-
-        return cls(config_data)
+        config = cls(config_data)
+        R2R_PROJECT_NAME = config.app.project_name or os.getenv("R2R_PROJECT_NAME") or "r2r_default"
+        os.environ["R2R_PROJECT_NAME"] = R2R_PROJECT_NAME
+        os.environ["R2R_POSTGRES_HOST"] = "10.1.150.105"
+        os.environ["R2R_POSTGRES_USER"]="langchain"
+        os.environ["R2R_POSTGRES_PASSWORD"]="langchain"
+        os.environ["R2R_POSTGRES_PORT"]="7000"
+        os.environ["R2R_POSTGRES_DBNAME"]="postgres"
+        logging.info(f"Environment R2R_CONFIG_PATH: {'None' if config_path is None else config_path}"        )
+        logging.info(f"Environment R2R_PROJECT_NAME: {os.getenv('R2R_PROJECT_NAME')}")
+        return config
 
     def to_toml(self):
         config_data = {}

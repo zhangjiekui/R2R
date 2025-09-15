@@ -1,0 +1,6 @@
+cd /data/R2R/docker
+docker compose -f compose.full.docker.yaml -p jqr2rdockercomposed --profile postgres up -d
+
+
+cd /data/R2R/docker
+docker compose -f compose.full.yaml -p jqr2rdockergithub --profile postgres up -d

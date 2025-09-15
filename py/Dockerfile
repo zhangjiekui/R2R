@@ -1,9 +1,11 @@
 FROM python:3.12-slim AS builder
 
 # Install system dependencies
+# 将默认 Debian 和安全源替换为清华镜像
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc g++ musl-dev curl libffi-dev gfortran libopenblas-dev \
-    poppler-utils \
+    poppler-utils nano \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
@@ -14,6 +16,10 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN mkdir -p /app/py
 WORKDIR /app/py
 COPY pyproject.toml ./
+
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
+    pip config set install.trusted-host mirrors.aliyun.com
+
 RUN pip install -e ".[core]" && \
     pip install gunicorn uvicorn pydantic
 
