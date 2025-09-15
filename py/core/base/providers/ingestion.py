@@ -21,16 +21,17 @@ class ChunkingStrategy(str, Enum):
     CHARACTER = "character"
     BASIC = "basic"
     BY_TITLE = "by_title"
+    JQ = "jq"
 
 
 class IngestionConfig(ProviderConfig):
     _defaults: ClassVar[dict] = {
         "app": AppConfig(),
-        "provider": "r2r",
+        "provider": "jq",
         "excluded_parsers": [],
         "chunking_strategy": "recursive",
-        "chunk_size": 1024,
-        "chunk_overlap": 512,
+        "chunk_size": 512,
+        "chunk_overlap": 100,
         "chunk_enrichment_settings": ChunkEnrichmentSettings(),
         "extra_parsers": {},
         "audio_transcription_model": None,
@@ -150,7 +151,7 @@ class IngestionConfig(ProviderConfig):
 
     @property
     def supported_providers(self) -> list[str]:
-        return ["r2r", "unstructured_local", "unstructured_api"]
+        return ["jq", "r2r", "unstructured_local", "unstructured_api"]
 
     def validate_config(self) -> None:
         if self.provider not in self.supported_providers:

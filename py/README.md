@@ -25,6 +25,16 @@ Agentic Retrieval-Augmented Generation (RAG) with a RESTful API.
 
 # About
 Jq Customed R2R
+```
+cd /data/jqr2r/R2R
+git add .
+git commit -a
+```
+```
+cd /data/jqr2r/R2R
+git push
+```
+
 
 R2R is an advanced AI retrieval system supporting Retrieval-Augmented Generation (RAG) with production-ready features. Built around a RESTful API, R2R offers multimodal content ingestion, hybrid search, knowledge graphs, and comprehensive document management.
 

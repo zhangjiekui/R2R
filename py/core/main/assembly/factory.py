@@ -43,6 +43,8 @@ from core.providers import (
     R2RCompletionProvider,
     R2RIngestionConfig,
     R2RIngestionProvider,
+    JqIngestionConfig,
+    JqIngestionProvider,
     SendGridEmailProvider,
     SimpleOrchestrationProvider,
     SupabaseAuthProvider,
@@ -163,6 +165,15 @@ class R2RProviderFactory:
                 llm_provider=llm_provider,
                 ocr_provider=ocr_provider,
             )
+        
+        elif config_dict["provider"] == "jq":
+            r2r_ingestion_config = JqIngestionConfig(
+                **config_dict, **extra_fields
+            )
+            return JqIngestionProvider(
+                r2r_ingestion_config, database_provider, llm_provider
+            )
+        
         elif config_dict["provider"] in [
             "unstructured_local",
             "unstructured_api",

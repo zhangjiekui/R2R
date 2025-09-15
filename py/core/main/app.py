@@ -125,7 +125,7 @@ class R2RApp:
             self.app,
             host=host,
             # port=port,
-            port=8282,
+            port=9292,
             log_config=None,
         )
         server = uvicorn.Server(config)

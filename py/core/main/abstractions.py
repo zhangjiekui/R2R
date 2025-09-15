@@ -24,6 +24,7 @@ from core.providers import (
     R2RAuthProvider,
     R2RCompletionProvider,
     R2RIngestionProvider,
+    JqIngestionProvider,
     S3FileProvider,
     SendGridEmailProvider,
     SimpleOrchestrationProvider,
@@ -50,7 +51,7 @@ class R2RProviders(BaseModel):
         | ClerkAuthProvider
     )
     database: PostgresDatabaseProvider
-    ingestion: R2RIngestionProvider | UnstructuredIngestionProvider
+    ingestion: R2RIngestionProvider | UnstructuredIngestionProvider | JqIngestionProvider
     email: (
         AsyncSMTPEmailProvider
         | ConsoleMockEmailProvider

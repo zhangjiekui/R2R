@@ -3,6 +3,7 @@ from .audio_parser import AudioParser
 from .bmp_parser import BMPParser
 from .doc_parser import DOCParser
 from .docx_parser import DOCXParser
+from .jq_docx_parser import JqDOCXParser
 from .img_parser import ImageParser
 from .odt_parser import ODTParser
 from .pdf_parser import (
@@ -20,6 +21,7 @@ __all__ = [
     "BMPParser",
     "DOCParser",
     "DOCXParser",
+    "JqDOCXParser",
     "ImageParser",
     "ODTParser",
     "OCRPDFParser",
