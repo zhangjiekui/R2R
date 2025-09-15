@@ -24,7 +24,7 @@ Agentic Retrieval-Augmented Generation (RAG) with a RESTful API.
 </div>
 
 # About
-Jq Customed R2R
+Jq Customed R2R Github Repository
 ```
 cd /data/jqr2r/R2R
 git add .

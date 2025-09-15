@@ -31,7 +31,7 @@ class JqDOCXParser(AsyncParser[str | bytes]):
     ) -> AsyncGenerator[str, None]:  # type: ignore
         """Ingest DOCX data and yield text from each paragraph."""
         if isinstance(data, str):
-            raise ValueError("DOCX/PDF etc. file data must be in bytes format.")
+            raise ValueError("DOCX etc. file data must be in bytes format.")
         document = kwargs.get("document",None)
         document_type = ''
         filename = ''
