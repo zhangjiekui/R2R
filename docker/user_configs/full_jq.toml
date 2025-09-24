@@ -15,12 +15,13 @@
 # host = "10.1.150.105"
 # port = 7000
 # db_name = "postgres"
-# project_name = "r2rprojectname"
-# default_collection_name = "R2RDefaultCollectionName"
+
 
 [app]
 # app settings are global available like `r2r_config.agent.app`
-#project_name = "r2r_v365" # optional, can also set with `R2R_PROJECT_NAME` env var
+#project_name  # optional, can also set with `R2R_PROJECT_NAME` env var
+project_name = "jq_new_project"
+default_collection_name = "default"
 default_max_documents_per_user = 10_000
 default_max_chunks_per_user = 10_000_000
 default_max_collections_per_user = 5_000
@@ -60,7 +61,7 @@ password = "langchain"
 host = "10.1.150.105"
 port = 7000
 db_name = "postgres"
-project_name = "r2r_v365"
+project_name = "jq_new_project"
 default_collection_name = "R2RDefaultCollectionName"
 default_collection_description = "R2R default collection name."
 collection_summary_prompt = "collection_summary"

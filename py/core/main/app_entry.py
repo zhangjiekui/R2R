@@ -81,6 +81,11 @@ project_name = (
     os.getenv("R2R_PROJECT_NAME") or config.app.project_name or "r2r_default"
 )
 
+logging.warning(
+    f"Used R2R_PROJECT_NAME/Postgrs Schama: {project_name}",
+)
+
+
 logging.info(
     f"Environment R2R_IMAGE: {os.getenv('R2R_IMAGE')}",
 )
