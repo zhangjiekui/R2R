@@ -25,7 +25,7 @@ RUN pip install -e ".[core]" && \
 
 # Optionally, if you want gunicorn and uvicorn explicitly installed, you can
 # either list them under [project] in `pyproject.toml` or install them here:
-RUN pip install --no-cache-dir gunicorn uvicorn
+RUN pip install --no-cache-dir gunicorn uvicorn sqlalchemy_utils fake_useragent
 
 # Create the final image
 FROM python:3.12-slim

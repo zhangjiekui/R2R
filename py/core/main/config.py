@@ -27,19 +27,27 @@ logger = logging.getLogger()
 
 
 class R2RConfig:
-    import pathlib
-    project_root_path = pathlib.Path().resolve()
-    project_path_parts = project_root_path._cparts
-    r2r_index = project_path_parts.index("R2R")
-    r2r_path = "/".join(project_path_parts[:r2r_index+1])[1:]
-    path_full_jq = os.path.join(r2r_path,
-        "docker",
-        "user_configs",
-        "full_jq.toml",
-    )
     CONFIG_OPTIONS: dict[str, Optional[str]] = {}
+    path_full_jq = fr"/app/user_configs/full_jq.toml"
     if os.path.exists(path_full_jq):
         CONFIG_OPTIONS["default"] = path_full_jq
+    else:
+        import pathlib
+        project_root_path = pathlib.Path().resolve()
+        try:
+            project_path_parts = project_root_path.parts
+        except:
+            project_path_parts = project_root_path._cparts
+        r2r_index = project_path_parts.index("R2R")
+        r2r_path = "/".join(project_path_parts[:r2r_index+1])[1:]
+        path_full_jq = os.path.join(r2r_path,
+            "docker",
+            "user_configs",
+            "full_jq.toml",
+        )
+        
+        if os.path.exists(path_full_jq):
+            CONFIG_OPTIONS["default"] = path_full_jq
 
 
     current_file_path = os.path.dirname(__file__)
