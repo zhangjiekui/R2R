@@ -18,6 +18,14 @@
 
 
 [app]
+provider = "litellm"
+api_base = 'http://10.1.150.105:3000/v1'
+fast_llm = "openai/qwen3"
+quality_llm ="openai/qwen3"
+vlm = "openai/qwenvl"
+audio_lm = ""
+reasoning_llm = ""
+planning_llm = ""
 # app settings are global available like `r2r_config.agent.app`
 #project_name  # optional, can also set with `R2R_PROJECT_NAME` env var
 project_name = "jq_new_project"

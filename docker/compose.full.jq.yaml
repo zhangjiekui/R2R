@@ -187,7 +187,7 @@ services:
   r2r:
     image: jqr2r365:latest
     ports:
-      - "8282:7272"
+      - "7272:7272"
     env_file:
       - ./env/r2r-full.env
     command: sh /scripts/start-r2r.sh
