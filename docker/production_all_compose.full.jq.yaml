@@ -57,10 +57,12 @@ services:
       POLARDB_DB: postgres
       POSTGRES_INITDB_ARGS: "--locale=zh_CN.utf8 --lc-collate=zh_CN.utf8 --lc-ctype=zh_CN.utf8 --encoding=UTF8"
       TZ: Asia/Shanghai
-      PGHOST: 127.0.0.1
+      # 添加这行，让容器内的进程也能知道密码
+      PGPASSWORD: langchain # <--- 添加这行
+      # PGHOST: 127.0.0.1
       # 其他环境变量如 PATH、LANG 等通常由镜像默认设置，无需显式声明
     ports:
-      - "7000:5432"  # Host:Container
+      - "7001:5432"  # Host:Container
     cap_add:
       - SYS_PTRACE
     privileged: true
@@ -77,24 +79,36 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U langchain -d postgres"]
       interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s  # PolarDB 启动较慢，建议增加启动等待时间
+      timeout: 10s
+      retries: 10
+      start_period: 120s  # PolarDB 启动较慢，建议增加启动等待时间
 
 # Vue晶奇前端服务
   jqai:
     image: jqai:v1.0.0
     container_name: jq_ai_ui_in_composed
     ports:
-      - "4090:4090"
+      - "5090:4090"
+    volumes:
+      - /data/pg_all_data/jqaiui_storage:/code/apps/server/storage
     environment:
-      DB_HOST: postgres_polardb15_vector_age_zh  # 使用 service name 或 container_name
-      DB_PORT: "5432"
       DB_USER: langchain
       DB_PASSWORD: langchain
+      DB_SCHEMA: fastbuildai
+      DB_HOST: postgres          # ✅ 改为 Compose 服务名
+      DB_PORT: "5432"            # ✅ 容器内端口，不是宿主机映射端口
+      REDIS_HOST: redis          # ✅ 改为 redis 服务名
+      REDIS_PORT: "6379"         # ✅ 容器内 Redis 端口
+      # DB_HOST: 10.1.150.105
+      # DB_PORT: "7001"
+      # REDIS_HOST: 10.1.150.105
+      # REDIS_PORT: "32768"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        # condition: service_healthy # 注释掉这行
+        condition: service_started  # 改为 service_started
+      redis:
+        condition: service_started
     restart: unless-stopped
   
   # 代码沙箱服务
@@ -303,7 +317,7 @@ services:
     ports:
       - "7272:7272"
     env_file:
-      - ./env/r2r-full.env
+      - ./env/r2r-full_in_jq_compose.env
     command: sh /scripts/start-r2r.sh
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7272/v3/health"]
@@ -324,8 +338,13 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:
+      postgres:
+        # condition: service_healthy # 注释掉这行
+        condition: service_started  # 改为 service_started
       setup-token:
         condition: service_completed_successfully
+      hatchet-engine:
+        condition: service_healthy
       unstructured:
         condition: service_healthy
       graph_clustering:
