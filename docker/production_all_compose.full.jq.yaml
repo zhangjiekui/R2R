@@ -62,7 +62,7 @@ services:
       # PGHOST: 127.0.0.1
       # 其他环境变量如 PATH、LANG 等通常由镜像默认设置，无需显式声明
     ports:
-      - "7001:5432"  # Host:Container
+      - "7000:5432"  # Host:Container
     cap_add:
       - SYS_PTRACE
     privileged: true
@@ -88,7 +88,7 @@ services:
     image: jqai:v1.0.0
     container_name: jq_ai_ui_in_composed
     ports:
-      - "5090:4090"
+      - "4090:4090"
     volumes:
       - /data/pg_all_data/jqaiui_storage:/code/apps/server/storage
     environment:
@@ -358,4 +358,6 @@ services:
       - "7273:3000"
 
 ## 原始引用路径 cd /data/jqr2r/R2R/docker
-# docker compose -p r2r365 -f production_all_compose.full.jq.yaml up -d --build --no-recreate
+# docker compose -p r2r365 -f production_all_compose.full.jq.yaml up -d --build
+# 或者
+# docker compose -p r2r365 -f production_all_compose.full.jq.yaml up -d --no-recreate
