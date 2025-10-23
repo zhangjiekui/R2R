@@ -23,8 +23,18 @@ Agentic Retrieval-Augmented Generation (RAG) with a RESTful API.
   </p>
 </div>
 
+# 运行docker compose
+```
+cd /data/jqr2r/R2R/docker
+docker compose -p r2r365 -f production_all_compose.full.jq.yaml up -d --no-recreate
 
+或
+cd /data/jqr2r/R2R/docker
+docker compose -p r2r365 -f production_all_compose.full.jq.yaml up -d --build
+```
 # JqR2R Github Push/Sync
+
+https://github.com/zhangjiekui/R2R/tree/feat
 ```
 cd /data/jqr2r/R2R
 git add .

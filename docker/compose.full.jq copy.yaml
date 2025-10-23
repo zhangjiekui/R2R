@@ -1,3 +1,4 @@
+version: '3.8'
 volumes:
   hatchet_certs:
     name: hatchet_certs
@@ -15,12 +16,15 @@ volumes:
     name: minio_data
   postgres_data2:
     name: postgres_data
+  polardb_vol:  # ← 新增这一行，和其他卷平级
+    # 可选：显式指定 name（通常不需要）
+    name: polardb_vol
 
 services:
   # Redis 缓存服务
   redis:
     image: registry.ap-southeast-1.aliyuncs.com/fastbuildai/redis:8.0.2
-    container_name: fastbuildai-redis
+    container_name: fastbuildai-redis${DOCKER_CONTAINER_SUFFIX}
     restart: always
     environment:
       TZ: Asia/Shanghai
@@ -38,17 +42,10 @@ services:
       timeout: 5s
       retries: 5
 
-# # pg数据库目录挂载
-# # 确保目录存在
-# mkdir -p /data/pg_all_data/pgdata
-# mkdir -p /data/pg_all_data/polardb-data
-
-# # 设置权限（你已执行，再次确认）
-# chown -R 999:999 /data/pg_all_data/pgdata
-# chown -R 999:999 /data/pg_all_data/polardb-data
   postgres:
     image: polardb15_vector_age_zh:v1.2  # 注意：实际镜像名不是官方的 polardb/polardb_pg_local_instance:15，而是你本地构建的
     container_name: postgres_polardb15_vector_age_zh
+    profiles: [postgres]
     environment:
       POLARDB_PORT: "5432"
       POLARDB_USER: langchain
@@ -66,34 +63,38 @@ services:
     security_opt:
       - label=disable
     volumes:
-      - /data/pg_all_data/pgdata:/var/lib/postgresql/data  # bind mount for PG data
-      - /data/pg_all_data/polardb-data:/var/polardb        # bind mount for PolarDB internal data
+      - /root/pgdata:/var/lib/postgresql/data  # bind mount for PG data
+      - polardb_vol:/var/polardb                # named volume for PolarDB internal data
     working_dir: /home/postgres/
     user: postgres
     entrypoint: ["./docker-entrypoint.sh"]
     command: ["postgres"]
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U langchain -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U langchain -d postgres -h 127.0.0.1"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s  # PolarDB 启动较慢，建议增加启动等待时间
 
-  jqai:
-    image: jqai:v1.0.0
-    container_name: jqai_compose
-    ports:
-      - "4090:4090"
-    environment:
-      DB_HOST: postgres_polardb15_vector_age_zh  # 使用 service name 或 container_name
-      DB_PORT: "5432"
-      DB_USER: langchain
-      DB_PASSWORD: langchain
-    depends_on:
-      - postgres
-      - redis
-    restart: unless-stopped
+  # postgres:
+  #   image: pgvector/pgvector:pg16
+  #   profiles: [postgres]
+  #   env_file:
+  #     - ./env/postgres.env
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: on-failure
+  #   command: >
+  #     postgres
+  #     -c max_connections=1024
 
   # minio:
   #   image: minio/minio

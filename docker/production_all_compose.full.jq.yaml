@@ -38,17 +38,18 @@ services:
       timeout: 5s
       retries: 5
 
-# # pg数据库目录挂载
-# # 确保目录存在
-# mkdir -p /data/pg_all_data/pgdata
-# mkdir -p /data/pg_all_data/polardb-data
+# postgres 数据库服务
+    # # pg数据库目录挂载
+    # # 确保目录存在
+    # mkdir -p /data/pg_all_data/pgdata
+    # mkdir -p /data/pg_all_data/polardb-data
 
-# # 设置权限（你已执行，再次确认）
-# chown -R 999:999 /data/pg_all_data/pgdata
-# chown -R 999:999 /data/pg_all_data/polardb-data
+    # # 设置权限（你已执行，再次确认）
+    # chown -R 999:999 /data/pg_all_data/pgdata
+    # chown -R 999:999 /data/pg_all_data/polardb-data
   postgres:
     image: polardb15_vector_age_zh:v1.2  # 注意：实际镜像名不是官方的 polardb/polardb_pg_local_instance:15，而是你本地构建的
-    container_name: postgres_polardb15_vector_age_zh
+    container_name: jq_postgres_polardb15_vector_age_zh_in_composed
     environment:
       POLARDB_PORT: "5432"
       POLARDB_USER: langchain
@@ -80,9 +81,10 @@ services:
       retries: 5
       start_period: 30s  # PolarDB 启动较慢，建议增加启动等待时间
 
+# Vue晶奇前端服务
   jqai:
     image: jqai:v1.0.0
-    container_name: jqai_compose
+    container_name: jq_ai_ui_in_composed
     ports:
       - "4090:4090"
     environment:
@@ -94,6 +96,54 @@ services:
       - postgres
       - redis
     restart: unless-stopped
+  
+  # 代码沙箱服务
+  sandbox:
+    container_name: jq_code_aio-sandbox_in_composed
+    image: aio_sandbox_jq:v1.1
+    entrypoint: ["sh"]
+    command: ["/opt/gem/run.sh"]
+    security_opt:
+      - seccomp:unconfined
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: "unless-stopped"
+    shm_size: "2gb"
+    ports:
+      - "${HOST_PORT:-9191}:8080"
+    volumes:
+      - /data/projects/JqChatV2/workspace:/data/projects/JqChatV2/workspace
+      - /data/projects/JqChatV2/JqChat/.Fonts_CN/MSYH:/usr/share/fonts/truetype/msyh
+    environment:
+      PROXY_SERVER: ${PROXY_SERVER:-}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      DNS_OVER_HTTPS_TEMPLATES: ${DNS_OVER_HTTPS_TEMPLATES:-}
+      WORKSPACE: ${WORKSPACE:-"/home/gem"}
+      HOMEPAGE: ${HOMEPAGE:-}
+      BROWSER_EXTRA_ARGS: ${BROWSER_EXTRA_ARGS:-}
+      TZ: ${TZ:-Asia/Singapore}
+      DISPLAY_WIDTH: ${DISPLAY_WIDTH:-1280}
+      DISPLAY_HEIGHT: ${DISPLAY_HEIGHT:-1024}
+      WAIT_PORTS: "8079,8091"
+      VNC_SERVER_PORT: 5900
+      PUBLIC_PORT: 8080
+      AUTH_BACKEND_PORT: 8081
+      WEBSOCKET_PROXY_PORT: 6080
+      GEM_SERVER_PORT: 8088
+      MCP_HUB_PORT: 8079
+      SANDBOX_SRV_PORT: 8091
+      JUPYTER_LAB_PORT: 8888
+      CODE_SERVER_PORT: 8200
+      MCP_SERVER_BROWSER_PORT: 8100
+      TINYPROXY_PORT: 8118
+      MCP_SERVER_MARKITDOWN_PORT: 8101
+      MCP_SERVER_CHROME_DEVTOOLS_PORT: 8102
+      BROWSER_REMOTE_DEBUGGING_PORT: 9222
+      PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+      UV_DEFAULT_INDEX: ${UV_DEFAULT_INDEX:-https://pypi.org/simple}
+      NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}
+      # for gh cli
+      GITHUB_TOKEN: ""
 
   # minio:
   #   image: minio/minio
@@ -249,6 +299,7 @@ services:
 
   r2r:
     image: jqr2r365:latest
+    container_name: jqr2r365_in_composed
     ports:
       - "7272:7272"
     env_file:
@@ -287,5 +338,5 @@ services:
     ports:
       - "7273:3000"
 
-# cd /data/jqr2r/R2R/docker
-# docker compose -p r2r365 -f compose.full.jq.yaml up -d --build --no-recreate
+## 原始引用路径 cd /data/jqr2r/R2R/docker
+# docker compose -p r2r365 -f production_all_compose.full.jq.yaml up -d --build --no-recreate
