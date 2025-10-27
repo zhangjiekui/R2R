@@ -127,10 +127,10 @@ chunking_strategy = "jq"
 #chunking_strategy = "recursive"
 #provider = "unstructured_local"
 #chunking_strategy = "by_title"
-#api_base = 'http://10.1.150.105:3000/v1'
+api_base = 'http://10.1.150.105:3000/v1'
 #document_summary_model = "openai/qwen3"
-#vision_img_model = "openai/qwenvl"
-#vision_pdf_model = "openai/qwenvl"
+vision_img_model = "openai/qwenvl"
+vision_pdf_model = "openai/qwenvl"
 
 chunk_size = 512
 chunk_overlap = 100
@@ -141,8 +141,8 @@ automatic_extraction = true # enable automatic extraction of entities and relati
     chunk_enrichment_prompt = "chunk_enrichment"
     enable_chunk_enrichment = false    
     n_chunks = 2
-#  [ingestion.extra_parsers]
-#    pdf = "zerox"
+  [ingestion.extra_parsers]
+    pdf = "zerox"
 
 [logging]
 provider = "r2r"
