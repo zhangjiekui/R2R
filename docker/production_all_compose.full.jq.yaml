@@ -126,6 +126,7 @@ services:
     ports:
       - "${HOST_PORT:-9191}:8080"
     volumes:
+    # 挂载项目目录,并在宿主机允许sudo chmod -R 777 /data/projects/JqChatV2/workspace将目录设置为可写
       - /data/projects/JqChatV2/workspace:/data/projects/JqChatV2/workspace
       - /data/projects/JqChatV2/JqChat/.Fonts_CN/MSYH:/usr/share/fonts/truetype/msyh
     environment:
