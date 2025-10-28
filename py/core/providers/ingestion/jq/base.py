@@ -123,7 +123,13 @@ class JqIngestionProvider(IngestionProvider):
             | R2RCompletionProvider
         ) = llm_provider
 
-        from r2r import env_models_instance
+        try:
+            from r2r import env_models_instance
+        except Exception as e:
+            logger.error(f"from r2r import env_models_instance无法导入: {e}")
+            logger.warning("尝试from jqcode.jq_agent.c0_init_env_models import env_models_instance......")
+            from jqcode.jq_agent.c0_init_env_models import env_models_instance
+            logger.warning("尝试from jqcode.jq_agent.c0_init_env_models import env_models_instance......成功")
         self.jq_reader = env_models_instance.jq_docx_reader
         self.jq_text_splitter = env_models_instance.jq_text_splitter            
         self.doc_tree_spiltter = env_models_instance.jq_doctree_spiltter        

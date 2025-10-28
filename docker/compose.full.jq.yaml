@@ -81,7 +81,7 @@ services:
       start_period: 30s  # PolarDB 启动较慢，建议增加启动等待时间
 
   jqai:
-    image: jqai:v1.0.0
+    image: jqai:v1.0.1
     container_name: jqai_compose
     ports:
       - "4090:4090"
@@ -114,7 +114,7 @@ services:
   #   command: server /data --console-address ":9001"
 
 
-# docker run --name jqai -p 4090:4090 -d jqai:v1.0.0
+# docker run --name jqai -p 4090:4090 -d jqai:v1.0.1
 
 
   hatchet-postgres:
@@ -288,4 +288,4 @@ services:
       - "7273:3000"
 
 # cd /data/jqr2r/R2R/docker
-# docker compose -p r2r365 -f compose.full.jq.yaml up -d --build --no-recreate
+# docker compose -p r2r365 -f /data/jqr2r/R2R/docker/compose.full.jq.yaml up -d --build --no-recreate

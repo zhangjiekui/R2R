@@ -85,7 +85,7 @@ services:
 
 # Vue晶奇前端服务
   jqai:
-    image: jqai:v1.0.0
+    image: jqai:v1.0.1
     container_name: jq_ai_ui_in_composed
     ports:
       - "4090:4090"
